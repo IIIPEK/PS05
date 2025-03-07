@@ -16,6 +16,8 @@ class DivannewparsSpider(scrapy.Spider):
             yield {
                 'card_name': card.xpath('(//span[@itemprop="name"])/text()').get(),
                 'price' : int(card.xpath('(//span[@data-testid="price"])[2]/text()').get().replace(" ",""))
+                'url' : card.xpath('//a[@target="_blank"]/@href').get()
+
             }
 
-        print(card_name)
+
