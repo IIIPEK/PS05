@@ -1,5 +1,6 @@
 import scrapy
-
+from divanru import DivanRu
+from selenium import webdriver
 
 class DivannewparsSpider(scrapy.Spider):
     name = "divannewpars"
@@ -7,9 +8,16 @@ class DivannewparsSpider(scrapy.Spider):
     #start_urls = ["https://divan.ru/category/divany-i-kresla"]
     start_urls = ["https://www.divan.ru/samara/category/svet"]
 
+    def __init__(self, *args, **kwargs):
+        super(DivannewparsSpider, self).__init__(*args, **kwargs)
+        self.driver = webdriver.Chrome()  # Selenium для загрузки категорий
+        self.divan = DivanRu(self.driver, "https://divan.ru")
+        self.divan.get_category()  # Загружаем категории
+        self.start_urls = [url[0] for url in self.divan.categories]
+        self.category_names = [url[1] for url in self.divan.categories]
+        self.driver.quit()
+
     def parse(self, response):
-        # offer_catalog = response.xpath('//div[@itemscope and @itemtype="https://schema.org/OfferCatalog"]')
-        # card_name = offer_catalog.xpath('./div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/div[1]/@class').get()
         cards =  response.xpath('//div[@itemscope and @itemprop="itemListElement" and @data-testid="product-card"]')
 
         for card in cards:
@@ -23,9 +31,9 @@ class DivannewparsSpider(scrapy.Spider):
 
                 price = f"Error in {price}"
             yield {
-                'card_name': card_name,
+                'card_name': f'{card_name}',
                 'price' : price,
-                'url' : card.xpath('.//a[@target="_blank"]/@href').get(),
+                'url' :  response.urljoin(card.xpath('.//a[@target="_blank"]/@href').get()),
 
             }
 
