@@ -14,11 +14,11 @@ class DivanparsPipeline:
         """Создает CSV-файл"""
         self.file = open("divanparser.csv", "w", newline="", encoding="utf-8")
         self.writer = csv.writer(self.file,quoting=csv.QUOTE_ALL)
-        self.writer.writerow(["card_name", "price", "url"])
+        self.writer.writerow(["start_url","card_name", "price", "url"])
 
     def process_item(self, item, spider):
         """Записывает каждую строку в CSV"""
-        self.writer.writerow([item["card_name"], item["price"], item["url"]])
+        self.writer.writerow([item["start_url"],item["card_name"], item["price"], item["url"]])
         return item
 
     def close_spider(self, spider):

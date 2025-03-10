@@ -31,10 +31,10 @@ class DivannewparsSpider(scrapy.Spider):
 
                 price = f"Error in {price}"
             yield {
+                'start_url': response.url,
                 'card_name': f'{card_name}',
                 'price' : price,
                 'url' :  response.urljoin(card.xpath('.//a[@target="_blank"]/@href').get()),
-
             }
 
 
